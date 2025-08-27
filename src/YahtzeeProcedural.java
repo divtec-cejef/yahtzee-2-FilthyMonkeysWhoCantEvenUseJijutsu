@@ -11,6 +11,15 @@ public class YahtzeeProcedural {
         dice = new int[count];
     }
 
+    public void rollOne(int index) {
+        if (index >= 0 && index < dice.length) {
+            dice[index] = random.nextInt(6) + 1;
+        } else {
+            System.out.println("Index invalide: " + index);
+        }
+    }
+
+
     public void rollAll() {
         for (int i = 0; i < dice.length; i++) {
             dice[i] = random.nextInt(6) + 1;
