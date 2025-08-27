@@ -1,11 +1,27 @@
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class YahtzeeProcedural {
 
-    private int[] dice;                  // make instance variable
+    private int[] dice;
     private final Random random = new Random();
+    private static final Scanner scanner = new Scanner(System.in);
+
+    // Track available combinations
+    private static Map<String, Boolean> availableCombinations = new LinkedHashMap<>();
+    static {
+        availableCombinations.put("Une paire", true);
+        availableCombinations.put("Deux paires", true);
+        availableCombinations.put("Brelan", true);
+        availableCombinations.put("Carré", true);
+        availableCombinations.put("Full House", true);
+        availableCombinations.put("Petite suite", true);
+        availableCombinations.put("Grande suite", true);
+        availableCombinations.put("Yahtzee", true);
+    }
 
     public YahtzeeProcedural(int count) {
         dice = new int[count];
@@ -18,7 +34,6 @@ public class YahtzeeProcedural {
             System.out.println("Index invalide: " + index);
         }
     }
-
 
     public void rollAll() {
         for (int i = 0; i < dice.length; i++) {
@@ -37,7 +52,6 @@ public class YahtzeeProcedural {
 
     // Ask player which dice to reroll, return null if nothing
     public static String reLaunchExe() {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Entrez les numéros des dés à relancer (1-5), séparés par espace, ou rien pour garder tous: ");
         String input = scanner.nextLine().trim();
         if (input.isEmpty()) {
@@ -59,7 +73,6 @@ public class YahtzeeProcedural {
                 System.out.println("Entrée invalide ignorée: " + p);
             }
         }
-
         for (int i = 0; i < dice.length; i++) {
             if (reroll[i]) dice[i] = random.nextInt(6) + 1;
         }
@@ -142,6 +155,53 @@ public class YahtzeeProcedural {
         System.out.println();
     }
 
+    // ----------------- New: Choix de combinaison -----------------
+    public static void showAvailableCombinations(int[] dice) {
+        System.out.println("Combinaisons disponibles :");
+        for (String comb : availableCombinations.keySet()) {
+            if (availableCombinations.get(comb)) {
+                int score = switch (comb) {
+                    case "Une paire" -> scorePair(dice);
+                    case "Deux paires" -> scoreTwoPairs(dice);
+                    case "Brelan" -> scoreThreeOfKind(dice);
+                    case "Carré" -> scoreFourOfKind(dice);
+                    case "Full House" -> scoreFullHouse(dice);
+                    case "Petite suite" -> scoreSmallStraight(dice);
+                    case "Grande suite" -> scoreLargeStraight(dice);
+                    case "Yahtzee" -> scoreYahtzee(dice);
+                    default -> 0;
+                };
+                System.out.println(" - " + comb + ": " + score);
+            }
+        }
+    }
+
+    public static void chooseCombination(int[] dice) {
+        while (true) {
+            showAvailableCombinations(dice);
+            System.out.print("Choisissez une combinaison pour marquer vos points: ");
+            String choice = scanner.nextLine().trim();
+            if (availableCombinations.containsKey(choice) && availableCombinations.get(choice)) {
+                int score = switch (choice) {
+                    case "Une paire" -> scorePair(dice);
+                    case "Deux paires" -> scoreTwoPairs(dice);
+                    case "Brelan" -> scoreThreeOfKind(dice);
+                    case "Carré" -> scoreFourOfKind(dice);
+                    case "Full House" -> scoreFullHouse(dice);
+                    case "Petite suite" -> scoreSmallStraight(dice);
+                    case "Grande suite" -> scoreLargeStraight(dice);
+                    case "Yahtzee" -> scoreYahtzee(dice);
+                    default -> 0;
+                };
+                availableCombinations.put(choice, false); // mark used
+                System.out.println("Vous marquez " + score + " points pour " + choice + " !");
+                break;
+            } else {
+                System.out.println("Combinaison invalide ou déjà utilisée, réessayez.");
+            }
+        }
+    }
+
     // ===== Main =====
     public static void main(String[] args) {
         YahtzeeProcedural game = new YahtzeeProcedural(5);
@@ -161,5 +221,8 @@ public class YahtzeeProcedural {
         }
 
         System.out.println("Résultat final: " + game);
+
+        // Jalon 4: choose combination
+        chooseCombination(game.getValues());
     }
 }
