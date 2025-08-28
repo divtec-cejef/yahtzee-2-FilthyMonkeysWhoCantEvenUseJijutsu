@@ -50,7 +50,7 @@ public class YahtzeeProcedural {
         return Arrays.toString(dice);
     }
 
-    // Ask player which dice to reroll, return null if nothing
+    // Ask player which dice to reroll
     public static String reLaunchExe() {
         System.out.print("Entrez les numéros des dés à relancer (1-5), séparés par espace, ou rien pour garder tous: ");
         String input = scanner.nextLine().trim();
@@ -176,7 +176,7 @@ public class YahtzeeProcedural {
         }
     }
 
-    public static void chooseCombination(int[] dice) {
+    public static int chooseCombination(int[] dice) {
         while (true) {
             showAvailableCombinations(dice);
             System.out.print("Choisissez une combinaison pour marquer vos points: ");
@@ -195,7 +195,7 @@ public class YahtzeeProcedural {
                 };
                 availableCombinations.put(choice, false); // mark used
                 System.out.println("Vous marquez " + score + " points pour " + choice + " !");
-                break;
+                return score;
             } else {
                 System.out.println("Combinaison invalide ou déjà utilisée, réessayez.");
             }
@@ -205,24 +205,34 @@ public class YahtzeeProcedural {
     // ===== Main =====
     public static void main(String[] args) {
         YahtzeeProcedural game = new YahtzeeProcedural(5);
+        int totalScore = 0;
 
-        // First roll
-        game.rollAll();
-        System.out.println("Lancer initial: " + game);
-        printAllScores(game.getValues());
+        for (int r = 1; r <= 5; r++) {
+            System.out.println("\n=== Manche " + r + " ===");
 
-        // Up to 2 rerolls
-        for (int i = 1; i <= 2; i++) {
-            String input = reLaunchExe();
-            if (input == null) break;        // player skips reroll
-            game.reLaunch(input);             // actually reroll dice
-            System.out.println("Après relance " + i + ": " + game);
+            // First roll
+            game.rollAll();
+            System.out.println("Lancer initial: " + game);
             printAllScores(game.getValues());
+
+            // Up to 2 rerolls
+            for (int i = 1; i <= 2; i++) {
+                String input = reLaunchExe();
+                if (input == null) break;
+                game.reLaunch(input);
+                System.out.println("Après relance " + i + ": " + game);
+                printAllScores(game.getValues());
+            }
+
+            System.out.println("Résultat final: " + game);
+
+            // Choose combination and update total score
+            int roundScore = chooseCombination(game.getValues());
+            totalScore += roundScore;
+            System.out.println("Score total après manche " + r + ": " + totalScore);
         }
 
-        System.out.println("Résultat final: " + game);
-
-        // Jalon 4: choose combination
-        chooseCombination(game.getValues());
+        System.out.println("\n=== Fin du jeu ===");
+        System.out.println("Score final: " + totalScore);
     }
 }
