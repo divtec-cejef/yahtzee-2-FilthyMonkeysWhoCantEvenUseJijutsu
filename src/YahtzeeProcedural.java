@@ -12,6 +12,7 @@ public class YahtzeeProcedural {
 
     // Track available combinations
     private static Map<String, Boolean> availableCombinations = new LinkedHashMap<>();
+
     static {
         availableCombinations.put("Une paire", true);
         availableCombinations.put("Deux paires", true);
@@ -213,7 +214,7 @@ public class YahtzeeProcedural {
             // First roll
             game.rollAll();
             System.out.println("Lancer initial: " + game);
-            printAllScores(game.getValues());
+            showAvailableCombinations(game.getValues());  // only show valid options
 
             // Up to 2 rerolls
             for (int i = 1; i <= 2; i++) {
@@ -221,7 +222,7 @@ public class YahtzeeProcedural {
                 if (input == null) break;
                 game.reLaunch(input);
                 System.out.println("Après relance " + i + ": " + game);
-                printAllScores(game.getValues());
+                showAvailableCombinations(game.getValues());  // filtered options
             }
 
             System.out.println("Résultat final: " + game);
