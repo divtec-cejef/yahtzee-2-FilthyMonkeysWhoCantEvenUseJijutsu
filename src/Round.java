@@ -12,6 +12,7 @@ public class Round {
     public void playRound() {
         diceHand.rollAll();
         System.out.println("Initial roll: " + diceHand);
+        player.getScorecard().printAvailableCategories(diceHand.getValues()); // show possible scores
 
         for (int i = 1; i <= 2; i++) {
             boolean[] reroll = ConsoleIO.chooseDiceToReroll(5);
@@ -19,14 +20,17 @@ public class Round {
             // check if all false
             boolean allFalse = true;
             for (boolean b : reroll) {
-                if (b) { allFalse = false; break; }
+                if (b) {
+                    allFalse = false;
+                    break;
+                }
             }
             if (allFalse) break;
 
             diceHand.rollSelected(reroll);
             System.out.println("After reroll " + i + ": " + diceHand);
+            player.getScorecard().printAvailableCategories(diceHand.getValues()); // show after reroll
         }
-
 
         System.out.println("Final dice: " + diceHand);
         player.chooseCategory(diceHand.getValues());

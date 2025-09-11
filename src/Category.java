@@ -1,15 +1,32 @@
 import java.util.Arrays;
 
 public enum Category {
-    PAIR, TWO_PAIRS, THREE_OF_A_KIND, FOUR_OF_A_KIND, FULL_HOUSE,
-    SMALL_STRAIGHT, LARGE_STRAIGHT, YAHTZEE;
+    ONE_PAIR("One Pair"),
+    TWO_PAIRS("Two Pairs"),
+    THREE_OF_A_KIND("Three of a Kind"),
+    FOUR_OF_A_KIND("Four of a Kind"),
+    FULL_HOUSE("Full House"),
+    SMALL_STRAIGHT("Small Straight"),
+    LARGE_STRAIGHT("Large Straight"),
+    YAHTZEE("Yahtzee");
+
+    private final String displayName;
+
+    Category(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
+    }
 
     public int score(int[] dice) {
         int[] counts = new int[7];
         for (int d : dice) counts[d]++;
 
         switch (this) {
-            case PAIR:
+            case ONE_PAIR:
                 for (int i = 6; i >= 1; i--) if (counts[i] >= 2) return i * 2;
                 return 0;
             case TWO_PAIRS:
